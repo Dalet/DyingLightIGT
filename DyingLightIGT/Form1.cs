@@ -33,7 +33,7 @@ namespace DyingLightIGT
 
                 if (result == DialogResult.Yes)
                 {
-                    System.Diagnostics.Process.Start("https://github.com/repos/Dalet/DyingLightIGT/releases/latest");
+                    System.Diagnostics.Process.Start("https://github.com/Dalet/DyingLightIGT/releases/latest");
                 }
             }
         }
