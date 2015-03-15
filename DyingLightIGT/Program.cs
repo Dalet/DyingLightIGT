@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace DyingLightIGT
@@ -11,6 +12,14 @@ namespace DyingLightIGT
         [STAThread]
         static void Main()
         {
+            Process curr = Process.GetCurrentProcess();
+            Process[] procs = Process.GetProcessesByName(curr.ProcessName);
+            foreach (Process p in procs)
+            {
+                if (p.Id != curr.Id && p.MainModule.FileName == curr.MainModule.FileName)
+                    return;
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

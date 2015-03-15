@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,6 +14,8 @@ namespace DyingLightIGT
 
         public delegate void OnTickEventHandler(object sender, float time);
         public event OnTickEventHandler OnTick;
+        public event EventHandler OnStart;
+        public event EventHandler OnReset;
 
         private Task _thread;
         private CancellationTokenSource _cancelSource;
@@ -95,6 +97,28 @@ namespace DyingLightIGT
 
                         if (gameTime != prevGameTime)
                         {
+                            if (gameTime < 1 && gameTime > 0 && prevGameTime != -1)
+                            {
+                                if (gameTime < prevGameTime)
+                                {
+                                    _uiThread.Post(d =>
+                                    {
+                                        if (this.OnReset != null)
+                                        {
+                                            this.OnReset(this, EventArgs.Empty);
+                                        }
+                                    }, null);
+                                }
+                                
+                                _uiThread.Post(d =>
+                                {
+                                    if (this.OnStart != null)
+                                    {
+                                        this.OnStart(this, EventArgs.Empty);
+                                    }
+                                }, null);
+                            }
+
                             _uiThread.Post(d =>
                             {
                                 if (this.OnTick != null)
@@ -132,13 +156,13 @@ namespace DyingLightIGT
                 return null;
             }
 
-            if (game.MainModule.ModuleMemorySize != (int)ExpectedExeSizes.steam_1_5_x64)
+            /*if (game.MainModule.ModuleMemorySize != (int)ExpectedExeSizes.steam_1_5_x64)
             {
                 _ignorePIDs.Add(game.Id);
                 _uiThread.Send(d => MessageBox.Show("Unexpected game version. Version 1.5 x64 is required.\r\n ModuleMemorySize: " + game.MainModule.ModuleMemorySize, "Dying Light IGT",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
-            }
+            }*/
 
             return game;
         }
