@@ -3,7 +3,7 @@ Dying Light IGT
 
 Settings
 --------
-   You can access the settings by right clicking Settings in the splits editor. 
+   You can access the settings by right clicking the main window. 
 
 LiveSplit
 ---------
