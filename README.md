@@ -16,7 +16,7 @@ _Dying Light IGT_'s window title will indicate if it is connected to LiveSplit.
 ### LiveSplit and Game Time
  
 If you want to compare your splits against Game Time:
-**Right click on LiveSplit's window **->** Compare Against **->** Game Time**
+**Right click on LiveSplit's window -> Compare Against -> Game Time**
 
 ### Alternate Timing Method
    If you want to display both Game Time and Real Time in your layout, I suggest getting the Alternate Timing Method component     from [LiveSplit's website](http://livesplit.org/components/) or from its own [GitHub page](https://github.com/Dalet/LiveSplit.AlternateTimingMethod/releases).
