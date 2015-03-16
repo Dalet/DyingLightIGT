@@ -1,13 +1,18 @@
 Dying Light IGT
 ===============
 
+Features
+--------
+* Display the game time of the currently loaded save.
+* [LiveSplit](http://livesplit.org) autosplitter: game time, automatic start and reset.
+
 Settings
 --------
    You can access the settings by right clicking the main window. 
 
 LiveSplit
 ---------
-To have this program interact with LiveSplit you need the [LiveSplit Server](http://livesplit.org/components/) component to be installed and running. Download it [here](http://livesplit.org/components/).
+To have this program interact with [LiveSplit](http://livesplit.org) you need the [LiveSplit Server](http://livesplit.org/components/) component to be installed and running. Download it [here](http://livesplit.org/components/).
 
 Add the server to your LiveSplit layout. Then to start it, right click anywhere on LiveSplit's window and choose **Control -> Start Server**. The server needs to be started manually everytime you launch LiveSplit.
 
