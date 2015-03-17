@@ -36,7 +36,8 @@ namespace DyingLightIGT
             _settings = new Settings();
 
             _uiThread = SynchronizationContext.Current;
-            Task.Factory.StartNew(CheckUpdate);
+            if (_settings.CheckUpdates)
+                Task.Factory.StartNew(CheckUpdate);
             _connectionTask = Task.Factory.StartNew(TryToConnect);
             _connectionCheckTask = Task.Factory.StartNew(CheckClientConnection);
 
@@ -64,27 +65,26 @@ namespace DyingLightIGT
         {
             TimeSpan ts = TimeSpan.FromTicks((long)(TimeSpan.TicksPerSecond * time));
 
-            string hours = string.Format("{0:00}:", ts.Hours);
+            int hoursTotal = ts.Days * 24 + ts.Hours;
+            string hours = hoursTotal + ":";
             string minutes = string.Format("{0:00}:", ts.Minutes);
             string seconds = string.Format("{0:00}", ts.Seconds); ;
             string milliseconds = string.Format(".{0:00}", ts.Milliseconds).Substring(0, 3);
 
-            if (ts.Hours == 0)
+            if (hoursTotal == 0)
                 hours = "";
-            else if (ts.Hours < 10)
-                hours = ts.Hours + ":";
 
-            if (ts.Minutes == 0 && ts.Hours == 0)
+            if (ts.Minutes == 0 && hoursTotal == 0)
                 minutes = "";
-            else if (ts.Minutes != 0 && ts.Minutes < 10 && ts.Hours == 0)
+            else if (ts.Minutes != 0 && ts.Minutes < 10 && hoursTotal == 0)
                 minutes = ts.Minutes + ":";
 
-            if (ts.Seconds < 10 && ts.Minutes == 0 && ts.Hours == 0)
+            if (ts.Seconds < 10 && ts.Minutes == 0 && hoursTotal == 0)
                 seconds = ts.Seconds.ToString();
 
             labelTimer.Text = hours + minutes + seconds + milliseconds;
             if (ts > new TimeSpan(0))
-                SendCommand("setgametime " + ts);
+                SendCommand("setgametime " + labelTimer.Text);
         }
 
         void SendCommand(string str)
@@ -202,6 +202,7 @@ namespace DyingLightIGT
         {
             _settings.SetDesktopLocation(this.DesktopLocation.X + 10, this.DesktopLocation.Y + 10);
             _settings.Show();
+            _settings.Focus();
         }
 
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
