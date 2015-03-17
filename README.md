@@ -1,6 +1,8 @@
 Dying Light IGT
 ===============
 
+![Image](http://i.imgur.com/gp4q8hT.png)
+
 Features
 --------
 * Display the game time of the currently loaded save.
