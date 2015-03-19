@@ -31,15 +31,17 @@ namespace DyingLightIGT
             formTitle = "DL IGT " + currentVer.Major + "." + currentVer.Minor + "." + currentVer.Build;
             labelTimer.Text = "0.00";
             this.Disposed += Dispose;
-            this.FormClosing += Form_FormClosing;
             this.Icon = Properties.Resources.DyingLightGame_161;
-            _settings = new Settings();
+            _settings = new Settings(this);
 
             _uiThread = SynchronizationContext.Current;
             if (_settings.CheckUpdates)
                 Task.Factory.StartNew(CheckUpdate);
             _connectionTask = Task.Factory.StartNew(TryToConnect);
             _connectionCheckTask = Task.Factory.StartNew(CheckClientConnection);
+
+            this.DataBindings.Add("BackColor", _settings, "BackgroundColor", false, DataSourceUpdateMode.OnPropertyChanged);
+            this.labelTimer.DataBindings.Add("ForeColor", _settings, "TimeColor", false, DataSourceUpdateMode.OnPropertyChanged);
 
             _gameMemory = new GameMemory();
             _gameMemory.OnTick += gameMemory_OnTick;
@@ -201,17 +203,7 @@ namespace DyingLightIGT
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _settings.SetDesktopLocation(this.DesktopLocation.X + 10, this.DesktopLocation.Y + 10);
-            _settings.Show();
-            _settings.Focus();
-        }
-
-        private void Form_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_settings.Visible)
-            {
-                e.Cancel = true;
-                _settings.Focus();
-            }
+            _settings.ShowDialog(this);
         }
     }
 }

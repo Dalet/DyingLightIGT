@@ -77,6 +77,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WinFormsColor">
+      <HintPath>.\WinFormsColor.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeepPointer.cs" />
@@ -155,10 +158,11 @@
     <PostBuildEvent>if $(ConfigurationName) == Debug goto :exit
 
 cd "$(SolutionDir)\packages\ilmerge*\tools"
-ILMerge.exe $(TargetDir)\$(TargetFileName) $(TargetDir)\Newtonsoft.Json.dll /out:$(TargetDir)\$(TargetFileName) /target:winexe
+ILMerge.exe $(TargetDir)\$(TargetFileName) $(TargetDir)\Newtonsoft.Json.dll $(TargetDir)\WinFormsColor.dll /out:$(TargetDir)\$(TargetFileName) /target:winexe
 DEL $(TargetDir)\Newtonsoft.Json.dll
 DEL $(TargetDir)\Newtonsoft.Json.xml
 DEL $(TargetDir)\DyingLightIGT.pdb
+DEL $(TargetDir)\WinFormsColor.dll
 
 :exit</PostBuildEvent>
   </PropertyGroup>
