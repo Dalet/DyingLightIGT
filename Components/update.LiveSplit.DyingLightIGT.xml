@@ -1,0 +1,10 @@
+<updates>
+   <update version="1.0.0">
+      <files>
+         <file path="Components/LiveSplit.DyingLightIGT.dll" status="changed"/>
+         <file path="Components/DyingLightIGT/DyingLightIGT.exe" status="added"/>
+      </files>
+      <changelog>
+      </changelog>
+   </update>
+</updates>

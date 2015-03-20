@@ -47,6 +47,7 @@ namespace DyingLightIGT
             this.btnTimeColorReset.Click += (s, e) => btnTimeColor.BackColor = DefaultTimeColor;
 
             InitializeConfigFile();
+            CheckArguments();
             
             this.chkCheckUpdates.DataBindings.Add("Checked", this, "CheckUpdates", false, DataSourceUpdateMode.OnPropertyChanged);
             this.btnBackgroundColor.DataBindings.Add("BackColor", this, "BackgroundColor", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -54,6 +55,21 @@ namespace DyingLightIGT
             this.chkAutoStart.DataBindings.Add("Checked", this, "AutoStart", false, DataSourceUpdateMode.OnPropertyChanged);
             this.chkAutoReset.DataBindings.Add("Checked", this, "AutoReset", false, DataSourceUpdateMode.OnPropertyChanged);
             this.numPort.DataBindings.Add("Value", this, "Port", false, DataSourceUpdateMode.OnPropertyChanged);
+        }
+
+        void CheckArguments()
+        {
+            int i = 0;
+            foreach (string arg in Program.args)
+            {
+                if (arg == "-port" && i < Program.args.Length)
+                {
+                    int port;
+                    if (int.TryParse(Program.args[i + 1], out port))
+                        Port = port;
+                }
+                i++;
+            }
         }
 
         void InitializeConfigFile()

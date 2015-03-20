@@ -6,12 +6,15 @@ namespace DyingLightIGT
 {
     static class Program
     {
+        public static string[] args;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] argv)
         {
+            args = argv;
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);
             foreach (Process p in procs)
