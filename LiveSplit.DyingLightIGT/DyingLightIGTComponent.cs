@@ -78,7 +78,7 @@ namespace LiveSplit.DyingLightIGT
                 if (Settings.ServerAutoStart)
                     server.Start();
 
-                string args = "-port " + server.Settings.Port;
+                string args = "-livesplit -port " + server.Settings.Port;
                 _dyingLightIGT = Process.Start(@"Components\DyingLightIGT\DyingLightIGT.exe", args);
             }
             else

@@ -62,12 +62,17 @@ namespace DyingLightIGT
             int i = 0;
             foreach (string arg in Program.args)
             {
-                if (arg == "-port" && i < Program.args.Length)
+                if (arg == "-port" && i + 1 < Program.args.Length)
                 {
                     int port;
                     if (int.TryParse(Program.args[i + 1], out port))
                         Port = port;
                 }
+                else if (arg == "-livesplit")
+                {
+                    CheckUpdates = false;
+                }
+
                 i++;
             }
         }
