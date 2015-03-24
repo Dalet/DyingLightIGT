@@ -17,6 +17,7 @@ namespace DyingLightIGT
         GameMemory _gameMemory;
 
         TcpClient _client;
+        Process _launcher;
 
         Task _connectionTask;
         Task _connectionCheckTask;
@@ -32,6 +33,9 @@ namespace DyingLightIGT
             labelTimer.Text = "0.00";
             this.Disposed += Dispose;
             this.Icon = Properties.Resources.DyingLightGame_161;
+
+            CheckArguments();
+
             _settings = new Settings(this);
 
             _uiThread = SynchronizationContext.Current;
@@ -89,6 +93,27 @@ namespace DyingLightIGT
                 SendCommand("setgametime " + labelTimer.Text);
         }
 
+        void CheckArguments()
+        {
+            int i = 0;
+            foreach (string args in Program.args)
+            {
+                if (args == "-launcherid" && i + 1 < Program.args.Length)
+                {
+                    int id;
+                    if (int.TryParse(Program.args[i + 1], out id))
+                    {
+                        try
+                        {
+                            _launcher = Process.GetProcessById(id);
+                        } catch (ArgumentException) { }
+                    }
+                }
+
+                i++;
+            }
+        }
+
         void SendCommand(string str)
         {
             if (_client != null)
@@ -98,13 +123,15 @@ namespace DyingLightIGT
                     byte[] bytes = ASCIIEncoding.ASCII.GetBytes(str + "\r\n");
                     Trace.WriteLine("Sending: " + str);
                     _client.GetStream().Write(bytes, 0, bytes.Length);
-                }
-                catch (System.IO.IOException) { }
+                } catch (Exception) { }
             }
         }
 
         void TryToConnect()
         {
+            if (_launcher != null && _launcher.HasExited)
+                Application.Exit();
+
             _uiThread.Send(d =>
             {
                 this.SetInfoString("LS link = KO");
@@ -138,7 +165,7 @@ namespace DyingLightIGT
                         if (_client.GetStream().Read(new byte[] { 0 }, 0, 1) == 0)
                             throw new System.IO.IOException("Couldn't read from the stream.");
                     }
-                    catch (System.IO.IOException)
+                    catch (Exception)
                     {
                         if (_client != null)
                         {

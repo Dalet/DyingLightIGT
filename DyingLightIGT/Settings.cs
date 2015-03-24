@@ -68,7 +68,7 @@ namespace DyingLightIGT
                     if (int.TryParse(Program.args[i + 1], out port))
                         Port = port;
                 }
-                else if (arg == "-livesplit")
+                else if (arg == "-livesplit") // arg used when launching via the LiveSplit component
                 {
                     CheckUpdates = false;
                 }

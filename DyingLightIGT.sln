@@ -13,6 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{688F6A
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveSplit.DyingLightIGT", "LiveSplit.DyingLightIGT\LiveSplit.DyingLightIGT.csproj", "{3703F6C7-2CE2-475E-ACBB-DA8DCC787CE2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{563F616A-4B4D-479B-9BAE-53B38977DA24} = {563F616A-4B4D-479B-9BAE-53B38977DA24}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

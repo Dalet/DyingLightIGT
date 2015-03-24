@@ -36,6 +36,7 @@ namespace LiveSplit.DyingLightIGT
 #endif
             Trace.WriteLine("[NoLoads] Using LiveSplit.DyingLightIGT component version " + Assembly.GetExecutingAssembly().GetName().Version + " " + ((debug) ? "Debug" : "Release") + " build");
             _state = state;
+            _state.OnStart += State_OnStart;
 
             try
             {
@@ -49,10 +50,7 @@ namespace LiveSplit.DyingLightIGT
             this.Settings = new DyingLightIGTSettings(state, _server);
 
             if (_server != null)
-            {
-                Task.Factory.StartNew(LaunchDyingLightIGT);
                 this.ContextMenuControls = _server.ContextMenuControls;
-            }
         }
 
         private void CreateServerComponent()
@@ -67,26 +65,35 @@ namespace LiveSplit.DyingLightIGT
         {
             if (!Environment.Is64BitOperatingSystem)
             {
-                MessageBox.Show("DyingLightIGT requires a 64-bit OS.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Dying Light IGT requires a 64-bit OS.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (File.Exists(@"Components\DyingLightIGT\DyingLightIGT.exe"))
             {
-                Thread.Sleep(250);
                 var server = (ServerComponent)_server;
                 if (Settings.ServerAutoStart)
                     server.Start();
 
-                string args = "-livesplit -port " + server.Settings.Port;
-                _dyingLightIGT = Process.Start(@"Components\DyingLightIGT\DyingLightIGT.exe", args);
+                _dyingLightIGT = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = @"Components\DyingLightIGT\DyingLightIGT.exe",
+                    Arguments = "-livesplit -launcherid " + Process.GetCurrentProcess().Id + " -port " + server.Settings.Port
+                });
             }
             else
                 MessageBox.Show("DyingLightIGT.exe is missing.\nPlease reinstall Dying Light IGT.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        void State_OnStart(object sender, EventArgs e)
+        {
+            _state.IsGameTimePaused = true;
+        }
+
         public override void Dispose()
         {
+            _state.OnStart -= State_OnStart;
+
             if (_server != null)
                 ServerDispose();
 
@@ -120,12 +127,16 @@ namespace LiveSplit.DyingLightIGT
                 this.Settings.SetSettings(settings);
         }
 
+        bool firstUpdate;
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
             if (invalidator != null)
             {
                 if (_server != null)
                     _server.Update(invalidator, state, width, height, mode);
+                if (!firstUpdate)
+                    Task.Factory.StartNew(LaunchDyingLightIGT);
+                firstUpdate = true;
             }
         }
     }
