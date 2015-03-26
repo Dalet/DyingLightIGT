@@ -232,5 +232,10 @@ namespace DyingLightIGT
             _settings.SetDesktopLocation(this.DesktopLocation.X + 10, this.DesktopLocation.Y + 10);
             _settings.ShowDialog(this);
         }
+
+        private void gitHubToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Dalet/DyingLightIGT");
+        }
     }
 }
