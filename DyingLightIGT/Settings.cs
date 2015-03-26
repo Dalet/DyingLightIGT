@@ -71,6 +71,7 @@ namespace DyingLightIGT
                 else if (arg == "-livesplit") // arg used when launching via the LiveSplit component
                 {
                     CheckUpdates = false;
+                    this.chkCheckUpdates.Visible = false;
                 }
 
                 i++;
