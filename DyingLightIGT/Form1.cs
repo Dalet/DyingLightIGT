@@ -56,7 +56,6 @@ namespace DyingLightIGT
 
         void gameMemory_OnStart(object sender, EventArgs e)
         {
-            SendCommand("pausegametime");
             if (_settings.AutoStart)
                 SendCommand("starttimer");
         }
@@ -149,7 +148,7 @@ namespace DyingLightIGT
 
             _uiThread.Send(d =>
             {
-                this.SendCommand("pausegametime");
+                this.SendCommand("alwayspausegametime");
                 this.SetInfoString("LS link = OK!");
             }, null);
         }
