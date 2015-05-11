@@ -181,12 +181,12 @@ namespace DyingLightIGT
 
         static bool ReadProcessPtr64(Process process, IntPtr addr, out IntPtr val)
         {
-            byte[] bytes = new byte[4];
+            byte[] bytes = new byte[8];
             long read;
             val = IntPtr.Zero;
             if (!SafeNativeMethods64.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
                 return false;
-            val = (IntPtr)BitConverter.ToInt32(bytes, 0);
+            val = (IntPtr)BitConverter.ToInt64(bytes, 0);
             return true;
         }
 
