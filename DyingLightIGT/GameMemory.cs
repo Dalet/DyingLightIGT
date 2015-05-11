@@ -10,7 +10,7 @@ namespace DyingLightIGT
 {
     class GameMemory
     {
-        public const int SLEEP_TIME = 25;
+        public const int SLEEP_TIME = 15;
 
         public delegate void OnTickEventHandler(object sender, float time);
         public event OnTickEventHandler OnTick;
@@ -33,7 +33,7 @@ namespace DyingLightIGT
 
         public GameMemory()
         {
-            _gameTimePtr = new DeepPointer("fmodex64.dll", 0x0018CC80, 0x1e8, 0x30, 0x2f0, 0x3a0);
+            _gameTimePtr = new DeepPointer("gamedll_x64_rwdi.dll", 0x18B6FE8, 0x518, 0x1f0, 0x8, 0x4b8, 0x3a0);
 
             _ignorePIDs = new List<int>();
         }
@@ -94,7 +94,7 @@ namespace DyingLightIGT
                         float gameTime;
 
                         _gameTimePtr.Deref(game, out gameTime, true);
-
+                        
                         if (gameTime != prevGameTime)
                         {
                             if (gameTime < 1 && gameTime > 0 && prevGameTime != -1)
