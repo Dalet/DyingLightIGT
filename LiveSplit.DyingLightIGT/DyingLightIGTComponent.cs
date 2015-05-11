@@ -36,7 +36,6 @@ namespace LiveSplit.DyingLightIGT
 #endif
             Trace.WriteLine("[NoLoads] Using LiveSplit.DyingLightIGT component version " + Assembly.GetExecutingAssembly().GetName().Version + " " + ((debug) ? "Debug" : "Release") + " build");
             _state = state;
-            _state.OnStart += State_OnStart;
 
             try
             {
@@ -110,15 +109,8 @@ namespace LiveSplit.DyingLightIGT
             }
         }
 
-        void State_OnStart(object sender, EventArgs e)
-        {
-            _state.IsGameTimePaused = true;
-        }
-
         public override void Dispose()
         {
-            _state.OnStart -= State_OnStart;
-
             if (_server != null)
                 ServerDispose();
 
