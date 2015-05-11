@@ -33,7 +33,7 @@ namespace DyingLightIGT
 
         public GameMemory()
         {
-            _gameTimePtr = new DeepPointer("engine_x64_rwdi.dll", 0x00A4C278, 0x3E8, 0x6d8, 0x4b8, 0x3a0);
+            _gameTimePtr = new DeepPointer("fmodex64.dll", 0x0018CC80, 0x1e8, 0x30, 0x2f0, 0x3a0);
 
             _ignorePIDs = new List<int>();
         }
