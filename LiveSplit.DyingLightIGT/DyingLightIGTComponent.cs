@@ -5,9 +5,7 @@ using LiveSplit.UI.Components;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -27,6 +25,7 @@ namespace LiveSplit.DyingLightIGT
         private LiveSplitState _state;
         private IComponent _server;
         private Process _dyingLightIGT;
+        private Task _launchDLIGTTask;
 
         public DyingLightIGTComponent(LiveSplitState state)
         {
@@ -74,10 +73,18 @@ namespace LiveSplit.DyingLightIGT
 
                 var server = (ServerComponent)_server;
 
+                string optionalArgs = String.Empty;
+                if (Settings.NoGUI)
+                {
+                    optionalArgs += " -nogui";
+                    optionalArgs += " -autostart=" + Settings.AutoStart;
+                    optionalArgs += " -autoreset=" + Settings.AutoReset;
+                }
+
                 _dyingLightIGT = Process.Start(new ProcessStartInfo()
                 {
                     FileName = @"Components\DyingLightIGT\DyingLightIGT.exe",
-                    Arguments = "-livesplit -launcherid " + Process.GetCurrentProcess().Id + " -port " + server.Settings.Port
+                    Arguments = "-livesplit -launcherid " + Process.GetCurrentProcess().Id + " -port " + server.Settings.Port + optionalArgs
                 });
             }
             else
@@ -111,6 +118,8 @@ namespace LiveSplit.DyingLightIGT
 
         public override void Dispose()
         {
+            _launchDLIGTTask.Dispose();
+
             if (_server != null)
                 ServerDispose();
 
@@ -144,16 +153,14 @@ namespace LiveSplit.DyingLightIGT
                 this.Settings.SetSettings(settings);
         }
 
-        bool firstUpdate;
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
             if (invalidator != null)
             {
                 if (_server != null)
                     _server.Update(invalidator, state, width, height, mode);
-                if (!firstUpdate)
-                    Task.Factory.StartNew(LaunchDyingLightIGT);
-                firstUpdate = true;
+                if (_launchDLIGTTask == null)
+                    _launchDLIGTTask = Task.Factory.StartNew(LaunchDyingLightIGT);
             }
         }
     }

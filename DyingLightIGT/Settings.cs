@@ -59,9 +59,10 @@ namespace DyingLightIGT
 
         void CheckArguments()
         {
-            int i = 0;
-            foreach (string arg in Program.args)
+            for (int i = 0; i < Program.args.Length; i++)
             {
+                string arg = Program.args[i];
+
                 if (arg == "-port" && i + 1 < Program.args.Length)
                 {
                     int port;
@@ -73,9 +74,20 @@ namespace DyingLightIGT
                     CheckUpdates = false;
                     this.chkCheckUpdates.Visible = false;
                 }
-
-                i++;
+                else if (arg.StartsWith("-autostart="))
+                {
+                    bool ret;
+                    if (Boolean.TryParse(arg.Remove(0, "-autostart=".Length), out ret))
+                        AutoStart = ret;
+                }
+                else if (arg.StartsWith("-autoreset="))
+                {
+                    bool ret;
+                    if (Boolean.TryParse(arg.Remove(0, "-autoreset=".Length), out ret))
+                        AutoReset = ret;
+                }
             }
+            SaveSettings();
         }
 
         void InitializeConfigFile()
@@ -167,7 +179,8 @@ namespace DyingLightIGT
 
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
+            if (e.CloseReason != CloseReason.FormOwnerClosing)
+                e.Cancel = true;
             SaveSettings();
             this.Hide();
         }
