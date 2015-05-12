@@ -93,7 +93,7 @@ namespace DyingLightIGT
                     {
                         float gameTime;
 
-                        _gameTimePtr.Deref(game, out gameTime, true);
+                        _gameTimePtr.Deref(game, out gameTime);
                         
                         if (gameTime != prevGameTime)
                         {

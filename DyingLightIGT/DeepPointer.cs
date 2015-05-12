@@ -13,6 +13,7 @@ namespace DyingLightIGT
         private List<int> _offsets;
         private int _base;
         private string _module;
+        private bool _isx64;
 
         public DeepPointer(string module, int base_, params int[] offsets)
         {
@@ -31,12 +32,14 @@ namespace DyingLightIGT
             _offsets.AddRange(offsets);
         }
 
-        public bool Deref<T>(Process process, out T value, bool x64 = false) where T : struct
+        public bool Deref<T>(Process process, out T value) where T : struct
         {
+            SetArchitecture(process);
+
             int offset = _offsets[_offsets.Count - 1];
             IntPtr ptr;
-            if (!this.DerefOffsets(process, out ptr, x64)
-                || !ReadProcessValue(process, ptr + offset, out value, x64))
+            if (!this.DerefOffsets(process, out ptr)
+                || !ReadProcessValue(process, ptr + offset, out value))
             {
                 value = default(T);
                 return false;
@@ -45,15 +48,17 @@ namespace DyingLightIGT
             return true;
         }
 
-        public bool Deref(Process process, out Vector3f value, bool x64 = false)
+        public bool Deref(Process process, out Vector3f value)
         {
+            SetArchitecture(process);
+
             int offset = _offsets[_offsets.Count - 1];
             IntPtr ptr;
             float x, y, z;
-            if (!this.DerefOffsets(process, out ptr, x64)
-                || !ReadProcessValue(process, ptr + offset + 0, out x, x64)
-                || !ReadProcessValue(process, ptr + offset + 4, out y, x64)
-                || !ReadProcessValue(process, ptr + offset + 8, out z, x64))
+            if (!this.DerefOffsets(process, out ptr)
+                || !ReadProcessValue(process, ptr + offset + 0, out x)
+                || !ReadProcessValue(process, ptr + offset + 4, out y)
+                || !ReadProcessValue(process, ptr + offset + 8, out z))
             {
                 value = new Vector3f();
                 return false;
@@ -63,14 +68,16 @@ namespace DyingLightIGT
             return true;
         }
 
-        public bool Deref(Process process, out string str, int max, bool x64 = false)
+        public bool Deref(Process process, out string str, int max)
         {
+            SetArchitecture(process);
+
             var sb = new StringBuilder(max);
 
             int offset = _offsets[_offsets.Count - 1];
             IntPtr ptr;
-            if (!this.DerefOffsets(process, out ptr, x64)
-                || !ReadProcessString(process, ptr + offset, sb, x64))
+            if (!this.DerefOffsets(process, out ptr)
+                || !ReadProcessString(process, ptr + offset, sb))
             {
                 str = String.Empty;
                 return false;
@@ -80,7 +87,15 @@ namespace DyingLightIGT
             return true;
         }
 
-        bool DerefOffsets(Process process, out IntPtr ptr, bool x64 = false)
+        void SetArchitecture(Process process)
+        {
+            if (IntPtr.Size == 8)
+                _isx64 = SafeNativeMethods64.Is64BitProcess(process.Handle);
+            else
+                _isx64 = false;
+        }
+
+        bool DerefOffsets(Process process, out IntPtr ptr)
         {
             if (!String.IsNullOrEmpty(_module))
             {
@@ -99,19 +114,10 @@ namespace DyingLightIGT
                 ptr = process.MainModule.BaseAddress + _base;
             }
 
-
             for (int i = 0; i < _offsets.Count - 1; i++)
             {
-                if (!x64)
-                {
-                    if (!ReadProcessPtr32(process, ptr + _offsets[i], out ptr))
-                        return false;
-                }
-                else
-                {
-                    if (!ReadProcessPtr64(process, ptr + _offsets[i], out ptr))
-                        return false;
-                }
+                if (!ReadProcessPtr(process, ptr + _offsets[i], out ptr))
+                    return false;
 
                 if (ptr == IntPtr.Zero)
                     return false;
@@ -120,14 +126,14 @@ namespace DyingLightIGT
             return true;
         }
 
-        static bool ReadProcessValue<T>(Process process, IntPtr addr, out T val, bool x64 = false) where T : struct
+        bool ReadProcessValue<T>(Process process, IntPtr addr, out T val) where T : struct
         {
             Type type = typeof(T);
 
             var bytes = new byte[Marshal.SizeOf(type)];
             val = default(T);
 
-            if (!x64)
+            if (!_isx64)
             {
                 int read;
                 if (!SafeNativeMethods.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
@@ -168,25 +174,26 @@ namespace DyingLightIGT
             return true;
         }
 
-        static bool ReadProcessPtr32(Process process, IntPtr addr, out IntPtr val)
+        bool ReadProcessPtr(Process process, IntPtr addr, out IntPtr val)
         {
-            byte[] bytes = new byte[4];
-            int read;
+            byte[] bytes = !_isx64 ? new byte[4] : new byte[8];
             val = IntPtr.Zero;
-            if (!SafeNativeMethods.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
-                return false;
-            val = (IntPtr)BitConverter.ToInt32(bytes, 0);
-            return true;
-        }
 
-        static bool ReadProcessPtr64(Process process, IntPtr addr, out IntPtr val)
-        {
-            byte[] bytes = new byte[8];
-            long read;
-            val = IntPtr.Zero;
-            if (!SafeNativeMethods64.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
-                return false;
-            val = (IntPtr)BitConverter.ToInt64(bytes, 0);
+            if (!_isx64)
+            {
+                int read;
+                if (!SafeNativeMethods.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
+                    return false;
+            }
+            else
+            {
+                long read;                
+                if (!SafeNativeMethods64.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
+                    return false;
+            }
+
+            val = !_isx64 ? (IntPtr)BitConverter.ToInt32(bytes, 0) : (IntPtr)BitConverter.ToInt64(bytes, 0);
+
             return true;
         }
 
@@ -226,12 +233,12 @@ namespace DyingLightIGT
             return true;
         }
 
-        public IntPtr GetAddress(Process process, bool x64 = false)
+        public IntPtr GetAddress(Process process)
         {
             int offset = _offsets[_offsets.Count - 1];
             IntPtr ptr;
 
-            this.DerefOffsets(process, out ptr, x64);
+            this.DerefOffsets(process, out ptr);
             if (ptr != IntPtr.Zero)
                 ptr += offset;
             return ptr;
