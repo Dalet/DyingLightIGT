@@ -94,10 +94,11 @@ namespace DyingLightIGT
 
         void CheckArguments()
         {
-            int i = 0;
-            foreach (string args in Program.args)
+            for (int i = 0; i < Program.args.Length; i++)
             {
-                if (args == "-launcherid" && i + 1 < Program.args.Length)
+                string arg = Program.args[i];
+
+                if (arg == "-launcherid" && i + 1 < Program.args.Length)
                 {
                     int id;
                     if (int.TryParse(Program.args[i + 1], out id))
@@ -105,11 +106,19 @@ namespace DyingLightIGT
                         try
                         {
                             _launcher = Process.GetProcessById(id);
-                        } catch (ArgumentException) { }
+                        }
+                        catch (ArgumentException) { }
                     }
                 }
-
-                i++;
+                else if (arg == "-nogui")
+                {
+                    this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                    this.ShowInTaskbar = false;
+                    this.Load += (s, e) =>
+                    {
+                        this.Size = new System.Drawing.Size(0, 0);
+                    };
+                }
             }
         }
 
@@ -122,15 +131,13 @@ namespace DyingLightIGT
                     byte[] bytes = ASCIIEncoding.ASCII.GetBytes(str + "\r\n");
                     Trace.WriteLine("Sending: " + str);
                     _client.GetStream().Write(bytes, 0, bytes.Length);
-                } catch (Exception) { }
+                }
+                catch (Exception) { }
             }
         }
 
         void TryToConnect()
         {
-            if (_launcher != null && _launcher.HasExited)
-                Application.Exit();
-
             _uiThread.Send(d =>
             {
                 this.SetInfoString("LS link = KO");
@@ -138,6 +145,9 @@ namespace DyingLightIGT
 
             while (_client == null)
             {
+                if (_launcher != null && _launcher.HasExited)
+                    Application.Exit();
+
                 try
                 {
                     _client = new TcpClient(_settings.SERVER_IP, _settings.Port);
@@ -221,7 +231,7 @@ namespace DyingLightIGT
                 SendCommand("unpausegametime");
                 _client.Close();
             }
-            
+
             if (_settings != null)
                 _settings.Dispose();
         }
