@@ -34,7 +34,7 @@ namespace DyingLightIGT
 
         public bool Deref<T>(Process process, out T value) where T : struct
         {
-            SetArchitecture(process);
+            SetBitness(process);
 
             int offset = _offsets[_offsets.Count - 1];
             IntPtr ptr;
@@ -50,7 +50,7 @@ namespace DyingLightIGT
 
         public bool Deref(Process process, out Vector3f value)
         {
-            SetArchitecture(process);
+            SetBitness(process);
 
             int offset = _offsets[_offsets.Count - 1];
             IntPtr ptr;
@@ -70,7 +70,7 @@ namespace DyingLightIGT
 
         public bool Deref(Process process, out string str, int max)
         {
-            SetArchitecture(process);
+            SetBitness(process);
 
             var sb = new StringBuilder(max);
 
@@ -87,7 +87,7 @@ namespace DyingLightIGT
             return true;
         }
 
-        void SetArchitecture(Process process)
+        void SetBitness(Process process)
         {
             if (IntPtr.Size == 8)
                 _isx64 = SafeNativeMethods64.Is64BitProcess(process.Handle);
@@ -231,17 +231,6 @@ namespace DyingLightIGT
             }
 
             return true;
-        }
-
-        public IntPtr GetAddress(Process process)
-        {
-            int offset = _offsets[_offsets.Count - 1];
-            IntPtr ptr;
-
-            this.DerefOffsets(process, out ptr);
-            if (ptr != IntPtr.Zero)
-                ptr += offset;
-            return ptr;
         }
     }
 
