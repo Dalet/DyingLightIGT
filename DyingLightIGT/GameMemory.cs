@@ -171,6 +171,11 @@ namespace DyingLightIGT
                 return null;
             }
 
+            //sometimes the module list is wrong for some reason
+            if (game.Modules.Cast<ProcessModule>()
+                    .FirstOrDefault(m => System.IO.Path.GetFileName(m.FileName).ToLower() == "gamedll_x64_rwdi.dll") == null)
+                return null;
+
             return game;
         }
     }
