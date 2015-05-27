@@ -33,7 +33,7 @@ namespace DyingLightIGT
 
         public GameMemory()
         {
-            _gameTimePtr = new DeepPointer("engine_x64_rwdi.dll", 0x00A4C278, 0x3E8, 0x6d8, 0x4b8, 0x3a0);
+            _gameTimePtr = new DeepPointer("gamedll_x64_rwdi.dll", 0x019919C8, 0x3C0);
 
             _ignorePIDs = new List<int>();
         }
@@ -156,13 +156,20 @@ namespace DyingLightIGT
                 return null;
             }
 
-            /*if (game.MainModule.ModuleMemorySize != (int)ExpectedExeSizes.steam_1_5_x64)
+            var fileInfo = game.MainModule.FileVersionInfo;
+            var version = new Version(fileInfo.FileMajorPart, fileInfo.FileMinorPart, fileInfo.FileBuildPart, fileInfo.FilePrivatePart);
+
+            if (version < new Version(1, 6, 0, 0))
+            {
+                _gameTimePtr = new DeepPointer("gamedll_x64_rwdi.dll", 0x18B6FE8, 0x518, 0x1f0, 0x8, 0x4b8, 0x3a0);
+            }
+            else if (version < new Version(1, 5, 0, 0))
             {
                 _ignorePIDs.Add(game.Id);
-                _uiThread.Send(d => MessageBox.Show("Unexpected game version. Version 1.5 x64 is required.\r\n ModuleMemorySize: " + game.MainModule.ModuleMemorySize, "Dying Light IGT",
+                _uiThread.Send(d => MessageBox.Show("Unexpected game version. Version 1.5 or later is required.\r\nVersion detected: " + version, "Dying Light IGT",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
-            }*/
+            }
 
             return game;
         }
