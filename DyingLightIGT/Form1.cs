@@ -208,7 +208,7 @@ namespace DyingLightIGT
 
             if (lastVer > Assembly.GetExecutingAssembly().GetName().Version)
             {
-                DialogResult result = MessageBox.Show("A new version is available.\nDo you want to update?", lastVer + " update", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show(this, "A new version is available.\nDo you want to update?", lastVer + " update", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                 if (result == DialogResult.Yes)
                 {
