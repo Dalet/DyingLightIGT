@@ -51,6 +51,7 @@ namespace DyingLightIGT
             _gameMemory.OnTick += gameMemory_OnTick;
             _gameMemory.OnStart += gameMemory_OnStart;
             _gameMemory.OnReset += gameMemory_OnReset;
+            _gameMemory.OnStoryPercentChange += gameMemory_OnStoryPercentChange;
             _gameMemory.StartMonitoring();
         }
 
@@ -90,6 +91,12 @@ namespace DyingLightIGT
             labelTimer.Text = hours + minutes + seconds + milliseconds;
             if (ts > new TimeSpan(0))
                 SendCommand("setgametime " + labelTimer.Text);
+        }
+
+        void gameMemory_OnStoryPercentChange(object sender, int percent)
+        {
+            if (_settings.AutoSplit &&_settings.AutoSplits.Contains(percent))
+                SendCommand("split");
         }
 
         void CheckArguments()
@@ -153,7 +160,7 @@ namespace DyingLightIGT
                     _client = new TcpClient(_settings.SERVER_IP, _settings.Port);
                 }
                 catch (SocketException) { }
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
 
             _uiThread.Send(d =>
@@ -238,7 +245,9 @@ namespace DyingLightIGT
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _settings.SetDesktopLocation(this.DesktopLocation.X + 10, this.DesktopLocation.Y + 10);
+            var x = this.DesktopLocation.X + (this.Width - _settings.Width) / 2;
+            var y = this.DesktopLocation.Y + (this.Height - _settings.Height) / 2 - 10;
+            _settings.SetDesktopLocation(x > 0 ? x : 0, y > 0 ? y : 0);
             _settings.ShowDialog(this);
         }
 

@@ -35,6 +35,8 @@
             this.numPort = new System.Windows.Forms.NumericUpDown();
             this.chkAutoStart = new System.Windows.Forms.CheckBox();
             this.chkAutoReset = new System.Windows.Forms.CheckBox();
+            this.chkAutosplits = new System.Windows.Forms.CheckBox();
+            this.btnAutosplits = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -73,7 +75,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(204, 247);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(204, 270);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -85,7 +87,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(10, 116);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(184, 91);
+            this.groupBox1.Size = new System.Drawing.Size(184, 120);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "LiveSplit Server";
@@ -97,25 +99,28 @@
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this.label1, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.numPort, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label1, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.numPort, 1, 3);
             this.tableLayoutPanel2.Controls.Add(this.chkAutoStart, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.chkAutoReset, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.chkAutosplits, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.btnAutosplits, 1, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowCount = 4;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(178, 72);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(178, 101);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 52);
+            this.label1.Location = new System.Drawing.Point(3, 81);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 13);
             this.label1.TabIndex = 0;
@@ -124,7 +129,7 @@
             // numPort
             // 
             this.numPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.numPort.Location = new System.Drawing.Point(104, 49);
+            this.numPort.Location = new System.Drawing.Point(104, 78);
             this.numPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -166,10 +171,36 @@
             this.chkAutoReset.Text = "Timer auto reset";
             this.chkAutoReset.UseVisualStyleBackColor = true;
             // 
+            // chkAutosplits
+            // 
+            this.chkAutosplits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkAutosplits.AutoSize = true;
+            this.chkAutosplits.Checked = true;
+            this.chkAutosplits.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutosplits.Location = new System.Drawing.Point(3, 52);
+            this.chkAutosplits.Name = "chkAutosplits";
+            this.chkAutosplits.Size = new System.Drawing.Size(95, 17);
+            this.chkAutosplits.TabIndex = 4;
+            this.chkAutosplits.Text = "Autosplitting";
+            this.chkAutosplits.UseVisualStyleBackColor = true;
+            // 
+            // btnAutosplits
+            // 
+            this.btnAutosplits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAutosplits.AutoSize = true;
+            this.btnAutosplits.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAutosplits.Location = new System.Drawing.Point(104, 49);
+            this.btnAutosplits.Name = "btnAutosplits";
+            this.btnAutosplits.Size = new System.Drawing.Size(71, 23);
+            this.btnAutosplits.TabIndex = 5;
+            this.btnAutosplits.Text = "Edit...";
+            this.btnAutosplits.UseVisualStyleBackColor = true;
+            this.btnAutosplits.Click += new System.EventHandler(this.btnAutosplits_Click);
+            // 
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(24, 214);
+            this.btnOk.Location = new System.Drawing.Point(24, 242);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 1;
@@ -181,7 +212,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(105, 214);
+            this.btnCancel.Location = new System.Drawing.Point(105, 242);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -313,7 +344,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(204, 247);
+            this.ClientSize = new System.Drawing.Size(204, 270);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -359,5 +390,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnBackgroundColorReset;
         private System.Windows.Forms.Button btnTimeColorReset;
+        private System.Windows.Forms.CheckBox chkAutosplits;
+        private System.Windows.Forms.Button btnAutosplits;
     }
 }

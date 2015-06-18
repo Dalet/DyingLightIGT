@@ -34,8 +34,6 @@
             this.gbDLIGT = new System.Windows.Forms.GroupBox();
             this.tlpDLIGT = new System.Windows.Forms.TableLayoutPanel();
             this.chkNoGUI = new System.Windows.Forms.CheckBox();
-            this.chkAutoStart = new System.Windows.Forms.CheckBox();
-            this.chkAutoReset = new System.Windows.Forms.CheckBox();
             this.gbMisc = new System.Windows.Forms.GroupBox();
             this.tlpMisc = new System.Windows.Forms.TableLayoutPanel();
             this.chkServerAutoStart = new System.Windows.Forms.CheckBox();
@@ -83,7 +81,7 @@
             this.tlpGeneral.RowCount = 2;
             this.tlpGeneral.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpGeneral.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGeneral.Size = new System.Drawing.Size(440, 142);
+            this.tlpGeneral.Size = new System.Drawing.Size(440, 96);
             this.tlpGeneral.TabIndex = 1;
             // 
             // gbDLIGT
@@ -94,7 +92,7 @@
             this.gbDLIGT.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbDLIGT.Location = new System.Drawing.Point(3, 3);
             this.gbDLIGT.Name = "gbDLIGT";
-            this.gbDLIGT.Size = new System.Drawing.Size(434, 88);
+            this.gbDLIGT.Size = new System.Drawing.Size(434, 42);
             this.gbDLIGT.TabIndex = 0;
             this.gbDLIGT.TabStop = false;
             this.gbDLIGT.Text = "Dying Light IGT";
@@ -105,18 +103,15 @@
             this.tlpDLIGT.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tlpDLIGT.ColumnCount = 1;
             this.tlpDLIGT.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpDLIGT.Controls.Add(this.chkAutoStart, 0, 1);
-            this.tlpDLIGT.Controls.Add(this.chkAutoReset, 0, 2);
             this.tlpDLIGT.Controls.Add(this.chkNoGUI, 0, 0);
             this.tlpDLIGT.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpDLIGT.Location = new System.Drawing.Point(3, 16);
             this.tlpDLIGT.Name = "tlpDLIGT";
-            this.tlpDLIGT.RowCount = 3;
+            this.tlpDLIGT.RowCount = 1;
             this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpDLIGT.Size = new System.Drawing.Size(428, 69);
+            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tlpDLIGT.Size = new System.Drawing.Size(428, 23);
             this.tlpDLIGT.TabIndex = 0;
             // 
             // chkNoGUI
@@ -130,33 +125,6 @@
             this.chkNoGUI.TabIndex = 1;
             this.chkNoGUI.Text = "Hide Dying Light IGT\'s window (next launch)";
             this.chkNoGUI.UseVisualStyleBackColor = true;
-            this.chkNoGUI.CheckedChanged += new System.EventHandler(this.chkNoGUI_CheckedChanged);
-            // 
-            // chkAutoStart
-            // 
-            this.chkAutoStart.AutoSize = true;
-            this.chkAutoStart.Checked = true;
-            this.chkAutoStart.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoStart.Location = new System.Drawing.Point(3, 26);
-            this.chkAutoStart.Name = "chkAutoStart";
-            this.chkAutoStart.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.chkAutoStart.Size = new System.Drawing.Size(78, 17);
-            this.chkAutoStart.TabIndex = 2;
-            this.chkAutoStart.Text = "Auto Start";
-            this.chkAutoStart.UseVisualStyleBackColor = true;
-            // 
-            // chkAutoReset
-            // 
-            this.chkAutoReset.AutoSize = true;
-            this.chkAutoReset.Checked = true;
-            this.chkAutoReset.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoReset.Location = new System.Drawing.Point(3, 49);
-            this.chkAutoReset.Name = "chkAutoReset";
-            this.chkAutoReset.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.chkAutoReset.Size = new System.Drawing.Size(84, 17);
-            this.chkAutoReset.TabIndex = 3;
-            this.chkAutoReset.Text = "Auto Reset";
-            this.chkAutoReset.UseVisualStyleBackColor = true;
             // 
             // gbMisc
             // 
@@ -164,7 +132,7 @@
             this.gbMisc.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.gbMisc.Controls.Add(this.tlpMisc);
             this.gbMisc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbMisc.Location = new System.Drawing.Point(3, 97);
+            this.gbMisc.Location = new System.Drawing.Point(3, 51);
             this.gbMisc.Name = "gbMisc";
             this.gbMisc.Size = new System.Drawing.Size(434, 42);
             this.gbMisc.TabIndex = 1;
@@ -236,8 +204,6 @@
         private System.Windows.Forms.GroupBox gbDLIGT;
         private System.Windows.Forms.GroupBox gbMisc;
         private System.Windows.Forms.TableLayoutPanel tlpMisc;
-        private System.Windows.Forms.CheckBox chkAutoStart;
-        private System.Windows.Forms.CheckBox chkAutoReset;
 
 
     }

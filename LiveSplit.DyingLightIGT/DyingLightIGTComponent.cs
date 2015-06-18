@@ -35,6 +35,7 @@ namespace LiveSplit.DyingLightIGT
 #endif
             Trace.WriteLine("[NoLoads] Using LiveSplit.DyingLightIGT component version " + Assembly.GetExecutingAssembly().GetName().Version + " " + ((debug) ? "Debug" : "Release") + " build");
             _state = state;
+            _state.OnStart += State_OnStart;
 
             if((_server = CreateServerComponent()) == null)
                 MessageBox.Show(_state.Form, "LiveSplit.Server.dll is missing.\nDownload it at http://livesplit.org/components/", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -74,8 +75,6 @@ namespace LiveSplit.DyingLightIGT
                 if (Settings.NoGUI)
                 {
                     optionalArgs += " -nogui";
-                    optionalArgs += " -autostart=" + Settings.AutoStart;
-                    optionalArgs += " -autoreset=" + Settings.AutoReset;
                 }
 
                 _dyingLightIGT = Process.Start(new ProcessStartInfo()
@@ -113,8 +112,16 @@ namespace LiveSplit.DyingLightIGT
             }
         }
 
+        void State_OnStart(object sender, EventArgs e)
+        {
+            if (_dyingLightIGT != null && !_dyingLightIGT.HasExited)
+                _state.IsGameTimePaused = true;
+        }
+
         public override void Dispose()
         {
+            _state.OnStart -= State_OnStart;
+
             _launchDLIGTTask.Dispose();
 
             if (_server != null)

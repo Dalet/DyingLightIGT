@@ -1,5 +1,7 @@
 ﻿using Fetze.WinFormsColor;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -16,16 +18,18 @@ namespace DyingLightIGT
         public int Port { get; set; }
         public bool AutoStart { get; set; }
         public bool AutoReset { get; set; }
+        public bool AutoSplit { get; set; }
+        public BindingList<int> AutoSplits { get; set; }
         public Color TimeColor { get; set; }
         public Color BackgroundColor { get; set; }
 
-        const string configFileName = "DyingLightIGT.cfg";
-        XmlDocument doc;
+        public const string CONFIG_FILE_NAME = "DyingLightIGT.cfg";
 
         Color DefaultBackgroundColor;
         Color DefaultTimeColor;
 
         Form1 _mainWindow;
+        Autosplits _autosplitsWindow;
 
         public Settings(Form1 parent)
         {
@@ -40,21 +44,24 @@ namespace DyingLightIGT
             Port = 16834;
             AutoStart = true;
             AutoReset = true;
+            AutoSplit = true;
+            AutoSplits = new BindingList<int>();
             BackgroundColor = DefaultBackgroundColor = _mainWindow.BackColor;
             TimeColor = DefaultTimeColor = _mainWindow.labelTimer.ForeColor;
 
             this.btnBackgroundColorReset.Click += (s, e) => btnBackgroundColor.BackColor = DefaultBackgroundColor;
             this.btnTimeColorReset.Click += (s, e) => btnTimeColor.BackColor = DefaultTimeColor;
 
-            InitializeConfigFile();
+            LoadSettings();
             CheckArguments();
-            
+
             this.chkCheckUpdates.DataBindings.Add("Checked", this, "CheckUpdates", false, DataSourceUpdateMode.OnPropertyChanged);
             this.btnBackgroundColor.DataBindings.Add("BackColor", this, "BackgroundColor", false, DataSourceUpdateMode.OnPropertyChanged);
             this.btnTimeColor.DataBindings.Add("BackColor", this, "TimeColor", false, DataSourceUpdateMode.OnPropertyChanged);
             this.chkAutoStart.DataBindings.Add("Checked", this, "AutoStart", false, DataSourceUpdateMode.OnPropertyChanged);
             this.chkAutoReset.DataBindings.Add("Checked", this, "AutoReset", false, DataSourceUpdateMode.OnPropertyChanged);
             this.numPort.DataBindings.Add("Value", this, "Port", false, DataSourceUpdateMode.OnPropertyChanged);
+            this.chkAutosplits.DataBindings.Add("Checked", this, "AutoSplit", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         void CheckArguments()
@@ -86,95 +93,92 @@ namespace DyingLightIGT
                     if (Boolean.TryParse(arg.Remove(0, "-autoreset=".Length), out ret))
                         AutoReset = ret;
                 }
+                else if (arg.StartsWith("-autosplit="))
+                {
+                    bool ret;
+                    if (Boolean.TryParse(arg.Remove(0, "-autosplit=".Length), out ret))
+                        AutoSplit = ret;
+                }
             }
             SaveSettings();
         }
 
-        void InitializeConfigFile()
-        {
-            doc = new XmlDocument();
-
-            if (File.Exists(configFileName))
-            {
-                LoadSettings();
-            }
-            else
-            {
-                doc.AppendChild(doc.CreateXmlDeclaration("1.0", null, null));
-
-                XmlElement settingsElem = doc.CreateElement("Settings");
-                settingsElem.SetAttribute("version", Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
-                doc.AppendChild(settingsElem);
-
-                XmlNode generalNode = doc.CreateElement("General");
-                settingsElem.AppendChild(generalNode);
-
-                generalNode.AppendChild(ToElement(doc, "CheckUpdates", CheckUpdates));
-                generalNode.AppendChild(ToElement(doc, "BackgroundColor", BackgroundColor));
-                generalNode.AppendChild(ToElement(doc, "TimeColor", TimeColor));
-
-                XmlNode liveSplitServerNode = doc.CreateElement("LiveSplitServer");
-                settingsElem.AppendChild(liveSplitServerNode);
-
-                liveSplitServerNode.AppendChild(ToElement(doc, "AutoStart", AutoStart));
-                liveSplitServerNode.AppendChild(ToElement(doc, "AutoReset", AutoReset));
-                liveSplitServerNode.AppendChild(ToElement(doc, "Port", Port));
-            }
-        }
-
         void SaveSettings()
         {
-            doc["Settings"].SetAttribute("version", Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+            var doc = new XmlDocument();
 
-            XmlNode generalNode = doc["Settings"]["General"];
-            generalNode["CheckUpdates"].InnerText = CheckUpdates.ToString();
-            generalNode["BackgroundColor"].InnerText = BackgroundColor.ToArgb().ToString("X8");
-            generalNode["TimeColor"].InnerText = TimeColor.ToArgb().ToString("X8");
+            doc.AppendChild(doc.CreateXmlDeclaration("1.0", null, null));
 
-            XmlNode liveSplitServerNode = doc["Settings"]["LiveSplitServer"];
-            liveSplitServerNode["AutoStart"].InnerText = AutoStart.ToString();
-            liveSplitServerNode["AutoReset"].InnerText = AutoReset.ToString();
-            liveSplitServerNode["Port"].InnerText = Port.ToString();
+            XmlElement settingsElem = doc.CreateElement("Settings");
+            settingsElem.SetAttribute("version", Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+            doc.AppendChild(settingsElem);
+
+            XmlNode generalNode = doc.CreateElement("General");
+            settingsElem.AppendChild(generalNode);
+
+            generalNode.AppendChild(ToElement(doc, "CheckUpdates", CheckUpdates));
+            generalNode.AppendChild(ToElement(doc, "BackgroundColor", BackgroundColor));
+            generalNode.AppendChild(ToElement(doc, "TimeColor", TimeColor));
+
+
+            XmlNode liveSplitServerNode = doc.CreateElement("LiveSplitServer");
+            settingsElem.AppendChild(liveSplitServerNode);
+
+            liveSplitServerNode.AppendChild(ToElement(doc, "Port", Port));
+            liveSplitServerNode.AppendChild(ToElement(doc, "AutoStart", AutoStart));
+            liveSplitServerNode.AppendChild(ToElement(doc, "AutoReset", AutoReset));
+            liveSplitServerNode.AppendChild(ToElement(doc, "AutoSplit", AutoSplit));
+            liveSplitServerNode.AppendChild(doc.CreateElement("AutoSplits"));
+
+            XmlNode autosplitsNode = liveSplitServerNode["AutoSplits"];
+            foreach (uint percent in AutoSplits)
+            {
+                autosplitsNode.AppendChild(ToElement(doc, "StoryPercentage", percent));
+            }
 
             try
             {
-                doc.Save(configFileName);
+                doc.Save(Application.StartupPath + "\\" + CONFIG_FILE_NAME);
             }
-            catch (UnauthorizedAccessException) { }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show(_mainWindow, "Access to the config file was denied when trying to save settings.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         void LoadSettings()
         {
-            if (File.Exists(configFileName))
+            var doc = new XmlDocument();
+
+            if (File.Exists(Application.StartupPath + "\\" + CONFIG_FILE_NAME))
             {
-                doc.Load(configFileName);
+                doc.Load(Application.StartupPath + "\\" + CONFIG_FILE_NAME);
+
+                Version settingsVersion = new Version(doc["Settings"].GetAttribute("version"));
+
+                XmlNode generalNode = doc["Settings"]["General"];
+
+                CheckUpdates = ParseBool(generalNode, "CheckUpdates", true);
+                BackgroundColor = ParseColor(generalNode["BackgroundColor"]);
+                TimeColor = ParseColor(generalNode["TimeColor"]);
+
+                XmlNode liveSplitServerNode = doc["Settings"]["LiveSplitServer"];
+
+                foreach (XmlNode child in liveSplitServerNode["AutoSplits"].ChildNodes)
+                {
+                    if (child.Name == "StoryPercentage")
+                    {
+                        var p = int.Parse(child.InnerText);
+                        if (!AutoSplits.Contains(p))
+                            AutoSplits.Add(p);
+                    }
+                }
+
+                AutoStart = ParseBool(liveSplitServerNode, "AutoStart", true);
+                AutoReset = ParseBool(liveSplitServerNode, "AutoReset", true);
+                AutoSplit = ParseBool(liveSplitServerNode, "AutoSplit", true);
+                Port = int.Parse(liveSplitServerNode["Port"].InnerText);
             }
-
-            Version settingsVersion = new Version(doc["Settings"].GetAttribute("version"));
-
-            XmlNode generalNode = doc["Settings"]["General"];
-            if (generalNode == null)
-            {
-                generalNode = doc.CreateElement("General");
-                doc["Settings"].AppendChild(generalNode);
-            }
-
-            if (generalNode["CheckUpdates"] == null)
-                generalNode.AppendChild(ToElement(doc, "CheckUpdates", CheckUpdates));
-            CheckUpdates = bool.Parse(generalNode["CheckUpdates"].InnerText);
-
-            if (generalNode["BackgroundColor"] == null)
-                generalNode.AppendChild(ToElement(doc, "BackgroundColor", BackgroundColor));
-            BackgroundColor = ParseColor(generalNode["BackgroundColor"]);
-
-            if (generalNode["TimeColor"] == null)
-                generalNode.AppendChild(ToElement(doc, "TimeColor", TimeColor));
-            TimeColor = ParseColor(generalNode["TimeColor"]);
-
-            XmlNode liveSplitServerNode = doc["Settings"]["LiveSplitServer"];
-            AutoStart = bool.Parse(liveSplitServerNode["AutoStart"].InnerText);
-            AutoReset = bool.Parse(liveSplitServerNode["AutoReset"].InnerText);
-            Port = int.Parse(liveSplitServerNode["Port"].InnerText);
         }
 
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
@@ -214,6 +218,14 @@ namespace DyingLightIGT
             return Color.FromArgb(Int32.Parse(colorElement.InnerText, NumberStyles.HexNumber));
         }
 
+        static bool ParseBool(XmlNode settings, string setting, bool default_ = false)
+        {
+            bool val;
+            return settings[setting] != null ?
+                (Boolean.TryParse(settings[setting].InnerText, out val) ? val : default_)
+                : default_;
+        }
+
         private void ColorButtonClick(object sender, EventArgs e)
         {
             var button = (Button)sender;
@@ -222,6 +234,13 @@ namespace DyingLightIGT
             picker.SelectedColor = picker.OldColor = button.BackColor;
             picker.ShowDialog(this);
             button.BackColor = Color.FromArgb(picker.SelectedColor.R, picker.SelectedColor.G, picker.SelectedColor.B);
+        }
+
+        private void btnAutosplits_Click(object sender, EventArgs e)
+        {
+            _autosplitsWindow = new Autosplits(this);
+            _autosplitsWindow.ShowDialog(this);
+            _autosplitsWindow = null;
         }
     }
 }
