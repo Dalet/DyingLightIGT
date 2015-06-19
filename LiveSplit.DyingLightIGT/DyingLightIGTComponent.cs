@@ -38,7 +38,7 @@ namespace LiveSplit.DyingLightIGT
             _state.OnStart += State_OnStart;
 
             if((_server = CreateServerComponent()) == null)
-                MessageBox.Show(_state.Form, "LiveSplit.Server.dll is missing.\nDownload it at http://livesplit.org/components/", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("LiveSplit.Server.dll is missing.\nDownload it at http://livesplit.org/components/", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             this.Settings = new DyingLightIGTSettings(state, _server);
 
@@ -60,7 +60,7 @@ namespace LiveSplit.DyingLightIGT
         {
             if (!Environment.Is64BitOperatingSystem)
             {
-                MessageBox.Show(_state.Form, "Dying Light IGT requires a 64-bit OS.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Dying Light IGT requires a 64-bit OS.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -84,7 +84,7 @@ namespace LiveSplit.DyingLightIGT
                 });
             }
             else
-                MessageBox.Show(_state.Form, "DyingLightIGT.exe is missing.\nPlease reinstall Dying Light IGT.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("DyingLightIGT.exe is missing.\nPlease reinstall Dying Light IGT.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         void StartServer()
@@ -107,7 +107,7 @@ namespace LiveSplit.DyingLightIGT
                         break;
                 }
 
-                if (DialogResult.Retry == MessageBox.Show(_state.Form, message, "LiveSplit.Server", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning))
+                if (DialogResult.Retry == MessageBox.Show(message, "LiveSplit.Server", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning))
                     StartServer();
             }
         }
