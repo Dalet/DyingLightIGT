@@ -39,7 +39,7 @@ namespace LiveSplit.DyingLightIGT
 
             if((_server = CreateServerComponent()) == null)
                 MessageBox.Show("LiveSplit.Server.dll is missing.\nDownload it at http://livesplit.org/components/", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+            
             this.Settings = new DyingLightIGTSettings(state, _server);
 
             if (_server != null)
@@ -65,13 +65,18 @@ namespace LiveSplit.DyingLightIGT
             }
 
             if (File.Exists(@"Components\DyingLightIGT\DyingLightIGT.exe"))
-            {              
-                if (Settings.ServerAutoStart)
-                    StartServer();
-
+            {
+                string optionalArgs = String.Empty;
                 var server = (ServerComponent)_server;
 
-                string optionalArgs = String.Empty;
+                if (server != null)
+                {
+                    if (Settings.ServerAutoStart)
+                        StartServer();
+
+                    optionalArgs += " -port " + server.Settings.Port;
+                }
+                                
                 if (Settings.NoGUI)
                 {
                     optionalArgs += " -nogui";
@@ -80,7 +85,7 @@ namespace LiveSplit.DyingLightIGT
                 _dyingLightIGT = Process.Start(new ProcessStartInfo()
                 {
                     FileName = @"Components\DyingLightIGT\DyingLightIGT.exe",
-                    Arguments = "-livesplit -launcherid " + Process.GetCurrentProcess().Id + " -port " + server.Settings.Port + optionalArgs
+                    Arguments = "-livesplit -launcherid " + Process.GetCurrentProcess().Id + optionalArgs
                 });
             }
             else
@@ -90,6 +95,7 @@ namespace LiveSplit.DyingLightIGT
         void StartServer()
         {
             var server = (ServerComponent)_server;
+            
             try
             {
                 server.Start();
