@@ -122,7 +122,7 @@ namespace DyingLightIGT
                                         }
                                     }, null);
                                 }
-                                
+
                                 _uiThread.Post(d =>
                                 {
                                     if (this.OnStart != null)

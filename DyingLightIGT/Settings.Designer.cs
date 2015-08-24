@@ -183,6 +183,7 @@
             this.chkAutosplits.TabIndex = 4;
             this.chkAutosplits.Text = "Autosplitting";
             this.chkAutosplits.UseVisualStyleBackColor = true;
+            this.chkAutosplits.Visible = false;
             // 
             // btnAutosplits
             // 
@@ -195,6 +196,7 @@
             this.btnAutosplits.TabIndex = 5;
             this.btnAutosplits.Text = "Edit...";
             this.btnAutosplits.UseVisualStyleBackColor = true;
+            this.btnAutosplits.Visible = false;
             this.btnAutosplits.Click += new System.EventHandler(this.btnAutosplits_Click);
             // 
             // btnOk
