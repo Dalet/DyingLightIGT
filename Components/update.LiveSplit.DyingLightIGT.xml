@@ -2,11 +2,10 @@
     <update version="1.0.0">
         <files>
             <file path="Components/LiveSplit.DyingLightIGT.dll" status="changed"/>
-            <file path="Components/DyingLightIGT/DyingLightIGT.exe" status="changed"/>
         </files>
         <changelog>
             <change>
-                LiveSplit component release.
+                Initial release.
             </change>
         </changelog>
     </update>

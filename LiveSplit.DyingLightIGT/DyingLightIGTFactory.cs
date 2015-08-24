@@ -9,12 +9,12 @@ namespace LiveSplit.DyingLightIGT
     {
         public string ComponentName
         {
-            get { return "Dying Light IGT"; }
+            get { return "Dying Light"; }
         }
 
         public string Description
         {
-            get { return "Dying Light autosplitter."; }
+            get { return "Dying Light Autosplitter"; }
         }
 
         public ComponentCategory Category

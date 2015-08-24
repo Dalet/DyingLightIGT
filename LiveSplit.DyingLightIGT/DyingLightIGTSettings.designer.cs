@@ -28,44 +28,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tabs = new System.Windows.Forms.TabControl();
-            this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.tlp = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tlpGeneral = new System.Windows.Forms.TableLayoutPanel();
-            this.gbDLIGT = new System.Windows.Forms.GroupBox();
-            this.tlpDLIGT = new System.Windows.Forms.TableLayoutPanel();
-            this.chkNoGUI = new System.Windows.Forms.CheckBox();
-            this.gbMisc = new System.Windows.Forms.GroupBox();
-            this.tlpMisc = new System.Windows.Forms.TableLayoutPanel();
-            this.chkServerAutoStart = new System.Windows.Forms.CheckBox();
-            this.tabs.SuspendLayout();
-            this.tabGeneral.SuspendLayout();
+            this.chkAutoStart = new System.Windows.Forms.CheckBox();
+            this.chkAutoReset = new System.Windows.Forms.CheckBox();
+            this.tlp.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.tlpGeneral.SuspendLayout();
-            this.gbDLIGT.SuspendLayout();
-            this.tlpDLIGT.SuspendLayout();
-            this.gbMisc.SuspendLayout();
-            this.tlpMisc.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabs
+            // tlp
             // 
-            this.tabs.Controls.Add(this.tabGeneral);
-            this.tabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabs.Location = new System.Drawing.Point(7, 7);
-            this.tabs.Name = "tabs";
-            this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(462, 473);
-            this.tabs.TabIndex = 0;
+            this.tlp.AutoSize = true;
+            this.tlp.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tlp.ColumnCount = 1;
+            this.tlp.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlp.Controls.Add(this.groupBox1, 0, 0);
+            this.tlp.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tlp.Location = new System.Drawing.Point(7, 7);
+            this.tlp.Name = "tlp";
+            this.tlp.RowCount = 1;
+            this.tlp.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlp.Size = new System.Drawing.Size(462, 83);
+            this.tlp.TabIndex = 0;
             // 
-            // tabGeneral
+            // groupBox1
             // 
-            this.tabGeneral.BackColor = System.Drawing.SystemColors.Control;
-            this.tabGeneral.Controls.Add(this.tlpGeneral);
-            this.tabGeneral.Location = new System.Drawing.Point(4, 22);
-            this.tabGeneral.Name = "tabGeneral";
-            this.tabGeneral.Padding = new System.Windows.Forms.Padding(7);
-            this.tabGeneral.Size = new System.Drawing.Size(454, 447);
-            this.tabGeneral.TabIndex = 0;
-            this.tabGeneral.Text = "General";
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.tlpGeneral);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(456, 77);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "General";
             // 
             // tlpGeneral
             // 
@@ -73,138 +72,66 @@
             this.tlpGeneral.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tlpGeneral.ColumnCount = 1;
             this.tlpGeneral.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpGeneral.Controls.Add(this.gbDLIGT, 0, 0);
-            this.tlpGeneral.Controls.Add(this.gbMisc, 0, 1);
-            this.tlpGeneral.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpGeneral.Location = new System.Drawing.Point(7, 7);
+            this.tlpGeneral.Controls.Add(this.chkAutoStart, 0, 0);
+            this.tlpGeneral.Controls.Add(this.chkAutoReset, 0, 1);
+            this.tlpGeneral.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpGeneral.Location = new System.Drawing.Point(3, 16);
             this.tlpGeneral.Name = "tlpGeneral";
             this.tlpGeneral.RowCount = 2;
-            this.tlpGeneral.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGeneral.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpGeneral.Size = new System.Drawing.Size(440, 96);
-            this.tlpGeneral.TabIndex = 1;
+            this.tlpGeneral.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tlpGeneral.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tlpGeneral.Size = new System.Drawing.Size(450, 58);
+            this.tlpGeneral.TabIndex = 0;
             // 
-            // gbDLIGT
+            // chkAutoStart
             // 
-            this.gbDLIGT.AutoSize = true;
-            this.gbDLIGT.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.gbDLIGT.Controls.Add(this.tlpDLIGT);
-            this.gbDLIGT.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbDLIGT.Location = new System.Drawing.Point(3, 3);
-            this.gbDLIGT.Name = "gbDLIGT";
-            this.gbDLIGT.Size = new System.Drawing.Size(434, 42);
-            this.gbDLIGT.TabIndex = 0;
-            this.gbDLIGT.TabStop = false;
-            this.gbDLIGT.Text = "Dying Light IGT";
+            this.chkAutoStart.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkAutoStart.AutoSize = true;
+            this.chkAutoStart.Location = new System.Drawing.Point(3, 6);
+            this.chkAutoStart.Name = "chkAutoStart";
+            this.chkAutoStart.Size = new System.Drawing.Size(98, 17);
+            this.chkAutoStart.TabIndex = 0;
+            this.chkAutoStart.Text = "Automatic Start";
+            this.chkAutoStart.UseVisualStyleBackColor = true;
             // 
-            // tlpDLIGT
+            // chkAutoReset
             // 
-            this.tlpDLIGT.AutoSize = true;
-            this.tlpDLIGT.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tlpDLIGT.ColumnCount = 1;
-            this.tlpDLIGT.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpDLIGT.Controls.Add(this.chkNoGUI, 0, 0);
-            this.tlpDLIGT.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpDLIGT.Location = new System.Drawing.Point(3, 16);
-            this.tlpDLIGT.Name = "tlpDLIGT";
-            this.tlpDLIGT.RowCount = 1;
-            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tlpDLIGT.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tlpDLIGT.Size = new System.Drawing.Size(428, 23);
-            this.tlpDLIGT.TabIndex = 0;
-            // 
-            // chkNoGUI
-            // 
-            this.chkNoGUI.AutoSize = true;
-            this.chkNoGUI.Checked = true;
-            this.chkNoGUI.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkNoGUI.Location = new System.Drawing.Point(3, 3);
-            this.chkNoGUI.Name = "chkNoGUI";
-            this.chkNoGUI.Size = new System.Drawing.Size(235, 17);
-            this.chkNoGUI.TabIndex = 1;
-            this.chkNoGUI.Text = "Hide Dying Light IGT\'s window (next launch)";
-            this.chkNoGUI.UseVisualStyleBackColor = true;
-            // 
-            // gbMisc
-            // 
-            this.gbMisc.AutoSize = true;
-            this.gbMisc.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.gbMisc.Controls.Add(this.tlpMisc);
-            this.gbMisc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbMisc.Location = new System.Drawing.Point(3, 51);
-            this.gbMisc.Name = "gbMisc";
-            this.gbMisc.Size = new System.Drawing.Size(434, 42);
-            this.gbMisc.TabIndex = 1;
-            this.gbMisc.TabStop = false;
-            this.gbMisc.Text = "Misc.";
-            // 
-            // tlpMisc
-            // 
-            this.tlpMisc.AutoSize = true;
-            this.tlpMisc.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tlpMisc.ColumnCount = 1;
-            this.tlpMisc.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpMisc.Controls.Add(this.chkServerAutoStart, 0, 0);
-            this.tlpMisc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpMisc.Location = new System.Drawing.Point(3, 16);
-            this.tlpMisc.Name = "tlpMisc";
-            this.tlpMisc.RowCount = 1;
-            this.tlpMisc.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpMisc.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.tlpMisc.Size = new System.Drawing.Size(428, 23);
-            this.tlpMisc.TabIndex = 0;
-            // 
-            // chkServerAutoStart
-            // 
-            this.chkServerAutoStart.AutoSize = true;
-            this.chkServerAutoStart.Checked = true;
-            this.chkServerAutoStart.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkServerAutoStart.Location = new System.Drawing.Point(3, 3);
-            this.chkServerAutoStart.Name = "chkServerAutoStart";
-            this.chkServerAutoStart.Size = new System.Drawing.Size(162, 17);
-            this.chkServerAutoStart.TabIndex = 0;
-            this.chkServerAutoStart.Text = "Start the server automatically";
-            this.chkServerAutoStart.UseVisualStyleBackColor = true;
+            this.chkAutoReset.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkAutoReset.AutoSize = true;
+            this.chkAutoReset.Location = new System.Drawing.Point(3, 35);
+            this.chkAutoReset.Name = "chkAutoReset";
+            this.chkAutoReset.Size = new System.Drawing.Size(104, 17);
+            this.chkAutoReset.TabIndex = 1;
+            this.chkAutoReset.Text = "Automatic Reset";
+            this.chkAutoReset.UseVisualStyleBackColor = true;
             // 
             // DyingLightIGTSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.tabs);
+            this.Controls.Add(this.tlp);
             this.Name = "DyingLightIGTSettings";
             this.Padding = new System.Windows.Forms.Padding(7);
             this.Size = new System.Drawing.Size(476, 487);
-            this.tabs.ResumeLayout(false);
-            this.tabGeneral.ResumeLayout(false);
-            this.tabGeneral.PerformLayout();
+            this.tlp.ResumeLayout(false);
+            this.tlp.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.tlpGeneral.ResumeLayout(false);
             this.tlpGeneral.PerformLayout();
-            this.gbDLIGT.ResumeLayout(false);
-            this.gbDLIGT.PerformLayout();
-            this.tlpDLIGT.ResumeLayout(false);
-            this.tlpDLIGT.PerformLayout();
-            this.gbMisc.ResumeLayout(false);
-            this.gbMisc.PerformLayout();
-            this.tlpMisc.ResumeLayout(false);
-            this.tlpMisc.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
+
         #endregion
 
-        private System.Windows.Forms.TabControl tabs;
-        private System.Windows.Forms.TabPage tabGeneral;
-        private System.Windows.Forms.TableLayoutPanel tlpDLIGT;
-        private System.Windows.Forms.CheckBox chkServerAutoStart;
-        private System.Windows.Forms.CheckBox chkNoGUI;
+        private System.Windows.Forms.TableLayoutPanel tlp;
+        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TableLayoutPanel tlpGeneral;
-        private System.Windows.Forms.GroupBox gbDLIGT;
-        private System.Windows.Forms.GroupBox gbMisc;
-        private System.Windows.Forms.TableLayoutPanel tlpMisc;
-
-
+        private System.Windows.Forms.CheckBox chkAutoStart;
+        private System.Windows.Forms.CheckBox chkAutoReset;
     }
 }

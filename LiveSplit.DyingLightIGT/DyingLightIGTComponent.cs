@@ -1,31 +1,23 @@
-﻿extern alias LiveSplitServer;
-using LiveSplit.Model;
+﻿using LiveSplit.Model;
 using LiveSplit.UI;
 using LiveSplit.UI.Components;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using ServerComponent = LiveSplitServer::LiveSplit.UI.Components.Component;
 
 namespace LiveSplit.DyingLightIGT
 {
     public class DyingLightIGTComponent : LogicComponent
     {
-        public override string ComponentName
-        {
-            get { return "Dying Light IGT"; }
-        }
+        public override string ComponentName => "Dying Light";
 
         public DyingLightIGTSettings Settings { get; set; }
 
         private LiveSplitState _state;
-        private IComponent _server;
-        private Process _dyingLightIGT;
-        private Task _launchDLIGTTask;
+        private GameMemory _gameMemory;
+        private TimerModel _timer;
 
         public DyingLightIGTComponent(LiveSplitState state)
         {
@@ -34,122 +26,54 @@ namespace LiveSplit.DyingLightIGT
             debug = true;
 #endif
             Trace.WriteLine("[NoLoads] Using LiveSplit.DyingLightIGT component version " + Assembly.GetExecutingAssembly().GetName().Version + " " + ((debug) ? "Debug" : "Release") + " build");
+
+            this.Settings = new DyingLightIGTSettings();
+
+            _timer = new TimerModel { CurrentState = state };
             _state = state;
+
             _state.OnStart += State_OnStart;
 
-            if((_server = CreateServerComponent()) == null)
-                MessageBox.Show("LiveSplit.Server.dll is missing.\nDownload it at http://livesplit.org/components/", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            
-            this.Settings = new DyingLightIGTSettings(state, _server);
-
-            if (_server != null)
-                this.ContextMenuControls = _server.ContextMenuControls;
-        }
-
-        private IComponent CreateServerComponent()
-        {
-            IComponentFactory serverFactory;
-
-            if (ComponentManager.ComponentFactories.TryGetValue("LiveSplit.Server.dll", out serverFactory))
-                return serverFactory.Create(_state);
-            else
-                return null;
-        }
-
-        private void LaunchDyingLightIGT()
-        {
-            if (!Environment.Is64BitOperatingSystem)
-            {
-                MessageBox.Show("Dying Light IGT requires a 64-bit OS.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (File.Exists(@"Components\DyingLightIGT\DyingLightIGT.exe"))
-            {
-                string optionalArgs = String.Empty;
-                var server = (ServerComponent)_server;
-
-                if (server != null)
-                {
-                    if (Settings.ServerAutoStart)
-                        StartServer();
-
-                    optionalArgs += " -port " + server.Settings.Port;
-                }
-                                
-                if (Settings.NoGUI)
-                {
-                    optionalArgs += " -nogui";
-                }
-
-                _dyingLightIGT = Process.Start(new ProcessStartInfo()
-                {
-                    FileName = @"Components\DyingLightIGT\DyingLightIGT.exe",
-                    Arguments = "-livesplit -launcherid " + Process.GetCurrentProcess().Id + optionalArgs
-                });
-            }
-            else
-                MessageBox.Show("DyingLightIGT.exe is missing.\nPlease reinstall Dying Light IGT.", "LiveSplit.DyingLightIGT", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        void StartServer()
-        {
-            var server = (ServerComponent)_server;
-            
-            try
-            {
-                server.Start();
-            }
-            catch (System.Net.Sockets.SocketException e)
-            {
-                string message;
-                switch (e.SocketErrorCode)
-                {
-                    case System.Net.Sockets.SocketError.AddressAlreadyInUse:
-                        message = "Port " + server.Settings.Port + " is already in use.";
-                        break;
-                    default:
-                        message = "An error occurred while trying to start the server.\nError code: " + e.SocketErrorCode;
-                        break;
-                }
-
-                if (DialogResult.Retry == MessageBox.Show(message, "LiveSplit.Server", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning))
-                    StartServer();
-            }
+            _gameMemory = new GameMemory();
+            _gameMemory.OnTick += gameMemory_OnTick;
+            _gameMemory.OnStart += gameMemory_OnStart;
+            _gameMemory.OnReset += gameMemory_OnReset;
+            _gameMemory.StartMonitoring();
         }
 
         void State_OnStart(object sender, EventArgs e)
         {
-            if (_dyingLightIGT != null && !_dyingLightIGT.HasExited)
-                _state.IsGameTimePaused = true;
+            _timer.InitializeGameTime();
+            _state.IsGameTimePaused = true;
+        }
+
+        void gameMemory_OnStart(object sender, EventArgs e)
+        {
+            if (Settings.AutoStart)
+                _timer.Start();
+        }
+
+        void gameMemory_OnReset(object sender, EventArgs e)
+        {
+            if (Settings.AutoReset)
+                _timer.Reset();
+        }
+
+        void gameMemory_OnTick(object sender, float time)
+        {
+            TimeSpan ts = TimeSpan.FromTicks((long)(TimeSpan.TicksPerSecond * time));
+            _state.SetGameTime(ts);
         }
 
         public override void Dispose()
         {
             _state.OnStart -= State_OnStart;
-
-            _launchDLIGTTask.Dispose();
-
-            if (_server != null)
-                ServerDispose();
-
-            if (_dyingLightIGT != null && !_dyingLightIGT.HasExited)
-                _dyingLightIGT.CloseMainWindow();
-        }
-
-        public void ServerDispose()
-        {
-            var server = (ServerComponent)_server;
-
-            server.Dispose();
+            _gameMemory?.Stop();
         }
 
         public override XmlNode GetSettings(XmlDocument document)
         {
-            if (Settings != null)
-                return this.Settings.GetSettings(document);
-            else
-                return null;
+            return Settings.GetSettings(document);
         }
 
         public override Control GetSettingsControl(LayoutMode mode)
@@ -159,19 +83,9 @@ namespace LiveSplit.DyingLightIGT
 
         public override void SetSettings(XmlNode settings)
         {
-            if (Settings != null)
-                this.Settings.SetSettings(settings);
+            this.Settings.SetSettings(settings);
         }
 
-        public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
-        {
-            if (invalidator != null)
-            {
-                if (_server != null)
-                    _server.Update(invalidator, state, width, height, mode);
-                if (_launchDLIGTTask == null)
-                    _launchDLIGTTask = Task.Factory.StartNew(LaunchDyingLightIGT);
-            }
-        }
+        public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode) { }
     }
 }
