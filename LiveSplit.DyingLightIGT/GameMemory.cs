@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiveSplit.ComponentUtil;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DyingLightIGT
+namespace LiveSplit.DyingLightIGT
 {
     class GameMemory
     {
@@ -16,8 +17,6 @@ namespace DyingLightIGT
         public event OnTickEventHandler OnTick;
         public event EventHandler OnStart;
         public event EventHandler OnReset;
-        public delegate void OnStoryPercentChangeEventHandler(object sender, int percent);
-        public event OnStoryPercentChangeEventHandler OnStoryPercentChange;
 
         private Task _thread;
         private CancellationTokenSource _cancelSource;
@@ -31,14 +30,6 @@ namespace DyingLightIGT
         {
             steam_1_5_x64 = 1454080,
         }
-
-        private List<string> RequiredModules = new List<string>()
-        {
-            "gamedll_x64_rwdi.dll",
-            "engine_x64_rwdi.dll"
-        };
-
-        public uint frameCounter = 0;
 
         public GameMemory()
         {
@@ -74,6 +65,7 @@ namespace DyingLightIGT
             _cancelSource.Cancel();
             _thread.Wait();
         }
+
         void MemoryReadThread()
         {
             Trace.WriteLine("[NoLoads] MemoryReadThread");
@@ -96,24 +88,30 @@ namespace DyingLightIGT
 
                     Trace.WriteLine("[NoLoads] Got DyingLightGame.exe!");
 
-                    frameCounter = 0;
+                    uint frameCounter = 0;
+                    bool isStarting, prevIsStarting;
+                    isStarting = prevIsStarting = false;
                     float prevGameTime = -1;
-                    int prevStoryPercent = 0;
+                    //int prevStoryPercent = 0;
 
                     while (!game.HasExited)
                     {
                         float gameTime;
                         _gameTimePtr.Deref(game, out gameTime);
 
-                        int storyPercent;
-                        _storyPercentagePtr.Deref(game, out storyPercent);
+                        //int storyPercent;
+                        //_storyPercentagePtr.Deref(game, out storyPercent);
 
                         if (gameTime != prevGameTime)
                         {
                             if (gameTime < 1 && gameTime > 0 && prevGameTime != -1)
                             {
-                                if (gameTime < prevGameTime)
+                                isStarting = true;
+
+                                if (isStarting != prevIsStarting)
                                 {
+                                    Trace.WriteLine($"[NoLoads] Start and Reset - {frameCounter}");
+
                                     _uiThread.Post(d =>
                                     {
                                         if (this.OnReset != null)
@@ -121,16 +119,19 @@ namespace DyingLightIGT
                                             this.OnReset(this, EventArgs.Empty);
                                         }
                                     }, null);
-                                }
 
-                                _uiThread.Post(d =>
-                                {
-                                    if (this.OnStart != null)
+                                    _uiThread.Post(d =>
                                     {
-                                        this.OnStart(this, EventArgs.Empty);
-                                    }
-                                }, null);
+                                        if (this.OnStart != null)
+                                        {
+                                            this.OnStart(this, EventArgs.Empty);
+                                        }
+                                    }, null);
+
+                                }
                             }
+                            else
+                                isStarting = false;
 
                             _uiThread.Post(d =>
                             {
@@ -141,20 +142,10 @@ namespace DyingLightIGT
                             }, null);
                         }
 
-                        if (storyPercent != prevStoryPercent)
-                        {
-                            _uiThread.Post(d =>
-                            {
-                                if (this.OnStoryPercentChange != null)
-                                {
-                                    this.OnStoryPercentChange(this, storyPercent);
-                                }
-                            }, null);
-                        }
-
                         frameCounter++;
+                        prevIsStarting = isStarting;
                         prevGameTime = gameTime;
-                        prevStoryPercent = storyPercent;
+                        //prevStoryPercent = storyPercent;
 
                         Thread.Sleep(SLEEP_TIME);
 
@@ -196,12 +187,6 @@ namespace DyingLightIGT
                 return null;
             }
 
-            //sometimes the module list is wrong for some reason
-            foreach (string module in RequiredModules)
-            {
-                if (game.Modules.Cast<ProcessModule>().FirstOrDefault(m => System.IO.Path.GetFileName(m.FileName).ToLower() == module.ToLower()) == null)
-                    return null;
-            }
 
             return game;
         }

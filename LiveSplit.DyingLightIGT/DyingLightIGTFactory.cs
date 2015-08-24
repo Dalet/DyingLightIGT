@@ -1,15 +1,11 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Xml;
-using LiveSplit.UI;
+﻿using LiveSplit.Model;
 using LiveSplit.UI.Components;
 using System;
-using LiveSplit.Model;
+using System.Reflection;
 
-namespace LiveSplit.DyingLight
+namespace LiveSplit.DyingLightIGT
 {
-    public class DyingLightFactory : IComponentFactory
+    public class DyingLightIGTFactory : IComponentFactory
     {
         public string ComponentName
         {
@@ -18,7 +14,7 @@ namespace LiveSplit.DyingLight
 
         public string Description
         {
-            get { return "Ingame time component for Dying Light"; }
+            get { return "Dying Light Autosplitter"; }
         }
 
         public ComponentCategory Category
@@ -28,7 +24,7 @@ namespace LiveSplit.DyingLight
 
         public IComponent Create(LiveSplitState state)
         {
-            return new DyingLightComponent(state);
+            return new DyingLightIGTComponent(state);
         }
 
         public string UpdateName
@@ -38,7 +34,7 @@ namespace LiveSplit.DyingLight
 
         public string UpdateURL
         {
-            get { return "https://raw.githubusercontent.com/Dalet/LiveSplit.DyingLight/master/"; }
+            get { return "https://raw.githubusercontent.com/Dalet/DyingLightIGT/master/"; }
         }
 
         public Version Version
@@ -48,7 +44,7 @@ namespace LiveSplit.DyingLight
 
         public string XMLURL
         {
-            get { return this.UpdateURL + "Components/update.LiveSplit.DyingLight.xml"; }
+            get { return this.UpdateURL + "Components/update.LiveSplit.DyingLightIGT.xml"; }
         }
     }
 }

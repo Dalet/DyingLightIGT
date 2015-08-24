@@ -187,7 +187,7 @@ namespace DyingLightIGT
             }
             else
             {
-                long read;
+                long read;                
                 if (!SafeNativeMethods64.ReadProcessMemory(process.Handle, addr, bytes, bytes.Length, out read) || read != bytes.Length)
                     return false;
             }

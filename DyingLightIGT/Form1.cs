@@ -17,6 +17,7 @@ namespace DyingLightIGT
         GameMemory _gameMemory;
 
         TcpClient _client;
+        Process _launcher;
 
         Task _connectionTask;
         Task _connectionCheckTask;
@@ -32,6 +33,9 @@ namespace DyingLightIGT
             labelTimer.Text = "0.00";
             this.Disposed += Dispose;
             this.Icon = Properties.Resources.DyingLightGame_161;
+
+            CheckArguments();
+
             _settings = new Settings(this);
 
             _uiThread = SynchronizationContext.Current;
@@ -47,12 +51,12 @@ namespace DyingLightIGT
             _gameMemory.OnTick += gameMemory_OnTick;
             _gameMemory.OnStart += gameMemory_OnStart;
             _gameMemory.OnReset += gameMemory_OnReset;
+            _gameMemory.OnStoryPercentChange += gameMemory_OnStoryPercentChange;
             _gameMemory.StartMonitoring();
         }
 
         void gameMemory_OnStart(object sender, EventArgs e)
         {
-            SendCommand("pausegametime");
             if (_settings.AutoStart)
                 SendCommand("starttimer");
         }
@@ -89,6 +93,42 @@ namespace DyingLightIGT
                 SendCommand("setgametime " + labelTimer.Text);
         }
 
+        void gameMemory_OnStoryPercentChange(object sender, int percent)
+        {
+            if (_settings.AutoSplit &&_settings.AutoSplits.Contains(percent))
+                SendCommand("split");
+        }
+
+        void CheckArguments()
+        {
+            for (int i = 0; i < Program.args.Length; i++)
+            {
+                string arg = Program.args[i];
+
+                if (arg == "-launcherid" && i + 1 < Program.args.Length)
+                {
+                    int id;
+                    if (int.TryParse(Program.args[i + 1], out id))
+                    {
+                        try
+                        {
+                            _launcher = Process.GetProcessById(id);
+                        }
+                        catch (ArgumentException) { }
+                    }
+                }
+                else if (arg == "-nogui")
+                {
+                    this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                    this.ShowInTaskbar = false;
+                    this.Load += (s, e) =>
+                    {
+                        this.Size = new System.Drawing.Size(0, 0);
+                    };
+                }
+            }
+        }
+
         void SendCommand(string str)
         {
             if (_client != null)
@@ -99,7 +139,7 @@ namespace DyingLightIGT
                     Trace.WriteLine("Sending: " + str);
                     _client.GetStream().Write(bytes, 0, bytes.Length);
                 }
-                catch (System.IO.IOException) { }
+                catch (Exception) { }
             }
         }
 
@@ -112,17 +152,20 @@ namespace DyingLightIGT
 
             while (_client == null)
             {
+                if (_launcher != null && _launcher.HasExited)
+                    Application.Exit();
+
                 try
                 {
                     _client = new TcpClient(_settings.SERVER_IP, _settings.Port);
                 }
                 catch (SocketException) { }
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
 
             _uiThread.Send(d =>
             {
-                this.SendCommand("pausegametime");
+                this.SendCommand("alwayspausegametime");
                 this.SetInfoString("LS link = OK!");
             }, null);
         }
@@ -138,7 +181,7 @@ namespace DyingLightIGT
                         if (_client.GetStream().Read(new byte[] { 0 }, 0, 1) == 0)
                             throw new System.IO.IOException("Couldn't read from the stream.");
                     }
-                    catch (System.IO.IOException)
+                    catch (Exception)
                     {
                         if (_client != null)
                         {
@@ -172,7 +215,7 @@ namespace DyingLightIGT
 
             if (lastVer > Assembly.GetExecutingAssembly().GetName().Version)
             {
-                DialogResult result = MessageBox.Show("A new version is available.\nDo you want to update?", lastVer + " update", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show(this, "A new version is available.\nDo you want to update?", lastVer + " update", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                 if (result == DialogResult.Yes)
                 {
@@ -195,15 +238,22 @@ namespace DyingLightIGT
                 SendCommand("unpausegametime");
                 _client.Close();
             }
-            
+
             if (_settings != null)
                 _settings.Dispose();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _settings.SetDesktopLocation(this.DesktopLocation.X + 10, this.DesktopLocation.Y + 10);
+            var x = this.DesktopLocation.X + (this.Width - _settings.Width) / 2;
+            var y = this.DesktopLocation.Y + (this.Height - _settings.Height) / 2 - 10;
+            _settings.SetDesktopLocation(x > 0 ? x : 0, y > 0 ? y : 0);
             _settings.ShowDialog(this);
+        }
+
+        private void gitHubToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Dalet/DyingLightIGT");
         }
     }
 }
