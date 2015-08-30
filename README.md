@@ -14,11 +14,9 @@ Settings
 
 LiveSplit
 ---------
-To have this program interact with [LiveSplit](http://livesplit.org) you need the [LiveSplit Server](http://livesplit.org/components/) component to be installed and running. Download it [here](http://livesplit.org/components/).
-
-Add the server to your LiveSplit layout. Then to start it, right click anywhere on LiveSplit's window and choose **Control -> Start Server**. The server needs to be started manually everytime you launch LiveSplit.
-
-_Dying Light IGT_'s window title will indicate if it is connected to LiveSplit.
+1. Open LiveSplit's splits editor. (right click -> Edit Splits...)
+2. The Game Name must be set to "Dying Light"
+3. Click Activate.
 
 ### LiveSplit and Game Time
  
